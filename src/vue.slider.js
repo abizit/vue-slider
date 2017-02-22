@@ -11,13 +11,13 @@ let vs = Vue.extend({
             <div class="vs-container">                         
                 <div class="vs-slide" v-for="slide in vslides" v-html="slide.outerHTML"></div>
             </div>             
-             <div class="vs-controls">
-                <div class="vs-nav">
-                    <div class="vs-prev" @click="changeSlide('left')">Prev</div>
-                    <div class="vs-next" @click="changeSlide('right')">Next</div>
+             <div class="vs-controls" v-if="settings.nav || settings.page">
+                <div class="vs-nav" v-if="settings.nav">
+                    <div class="vs-prev" @click="navigation('left')">Prev</div>
+                    <div class="vs-next" @click="navigation('right')">Next</div>
                 </div>
-                <div class="vs-dots">
-                    <div v-for="(slide , index) in vslides" class="vs-dot" @click="gotoSlide(index)"></div>
+                <div class="vs-dots" v-if="settings.page">
+                    <div v-for="(slide , index) in vslides"  @click="gotoSlide(index)" v-bind:class="'vs-dot ' +  [index == active ? 'active' : '']"></div>
                 </div>
              </div>
         </div>  
@@ -25,28 +25,42 @@ let vs = Vue.extend({
     props: ['vslides', 'voptions'],
     data: function () {
         return {
-            settings: this.voptions, // User Options
-            count: this.vslides.length, // No Of Items
-            sliderWidth: 0, // Slider Width used if the transition option is 'slide'
-            container: null,
-            slides: null,
-            active: 0,
-            activeSlide: null
+            settings: {
+                transition: 'fade',
+                start: 1,
+                nav: true, // [ Boolean ] - Show Prev/Next Buttons
+                page: true // [ Boolean ] - Show Paginations
+            }, // [ Object ] - User Options
+            count: this.vslides.length, // [ Integer ] - No Of Items
+            sliderWidth: 0, // [ Integer ] - Slider Width used if the transition option is 'slide'
+            container: null, // [ HTMLDivElement ] - Main Outer Container
+            slides: null, // [ NodeList ] - Array of all the slides
+            active: 0, // [ Integer] - active slide index
+            activeSlide: null // [ HTMLDivElement ] - Active Slide Object
         }
     },
     mounted: function () {
-        document.body.className = "vue-slider-enabled";
 
+        /********** SLIDER SETUP **********/
+        document.body.className = "vue-slider-enabled";
         this.container = document.querySelector('.vs-container');
         this.slides = document.querySelectorAll('.vs-slide');
 
+        /*********** SLIDER OPTIONS **********/
+        // Check the type of each of the user options
+        // Merge user options with default settings
+        for (let option in this.voptions) {
+            if (this.voptions.hasOwnProperty(option)) {
+                if (typeof this.settings[option] == typeof this.voptions[option]) {
+                    this.settings[option] = this.voptions[option]
+                }
+            }
+        }
 
         // Set Starting Slide
-        this.settings.startPosition == undefined
-        || this.settings.startPosition <= 1
-        || this.settings.startPosition > this.count ?
+        this.settings.start <= 1 || this.settings.start > this.count ?
             this.active = 0 :
-            this.active = this.settings.startPosition - 1;
+            this.active = this.settings.start - 1;
 
         // Add "active-slide" class to the starting slide
         this.activeSlide = this.slides[this.active];
@@ -72,7 +86,7 @@ let vs = Vue.extend({
         },
         // Sets active slide depending on direction.
         // @param { String } [ direction ]- The direction to move.
-        changeSlide(direction){
+        navigation(direction){
             if (direction == 'left') {
                 if (this.active < 1) {
                     this.active = this.count - 1;
@@ -104,7 +118,7 @@ let vs = Vue.extend({
 
 function vueslider(selector, options) {
     let slideContainer = document.querySelector(selector),
-        vSlides= slideContainer.getElementsByTagName('vue-slider')[0].children;
+        vSlides = slideContainer.getElementsByTagName('vue-slider')[0].children;
     new Vue({
         el: selector,
         data: {
