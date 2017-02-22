@@ -9,8 +9,7 @@ let vs = Vue.extend({
     template: `            
         <div class="vue-slider">                
             <div class="vs-container">                         
-                <div class="vs-slide" v-for="slide in vslides" v-html="slide.outerHTML">                    
-                </div>
+                <div class="vs-slide" v-for="slide in vslides" v-html="slide.outerHTML"></div>
             </div>             
              <div class="vs-controls">
                 <div class="vs-nav">
@@ -18,7 +17,7 @@ let vs = Vue.extend({
                     <div class="vs-next" @click="changeSlide('right')">Next</div>
                 </div>
                 <div class="vs-dots">
-                    <div v-for="(slide , index) in vslides" :class="['vs-dot dot-' + (1+index)]" @click="gotoSlide(slide)"></div>
+                    <div v-for="(slide , index) in vslides" class="vs-dot" @click="gotoSlide(index)"></div>
                 </div>
              </div>
         </div>  
@@ -31,7 +30,8 @@ let vs = Vue.extend({
             sliderWidth: 0, // Slider Width used if the transition option is 'slide'
             container: null,
             slides: null,
-            active: 0
+            active: 0,
+            activeSlide: null
         }
     },
     mounted: function () {
@@ -49,7 +49,8 @@ let vs = Vue.extend({
             this.active = this.settings.startPosition - 1;
 
         // Add "active-slide" class to the starting slide
-        this.slides[this.active].classList.add('active-slide');
+        this.activeSlide = this.slides[this.active];
+        this.activeSlide.classList.add('active-slide');
 
         // Set Width to Slider Container if the transition options is 'slide'
         this.each(this.slides, function (i, e) {
@@ -69,57 +70,51 @@ let vs = Vue.extend({
                 callback.call(scope, i, array[i])
             }
         },
-        // Find the active slide
-        findActiveSlide(){
-            return this.slides[this.active];
-        },
         // Sets active slide depending on direction.
         // @param { String } [ direction ]- The direction to move.
         changeSlide(direction){
-            let activeSlide = this.findActiveSlide();
-            activeSlide.classList.remove('active-slide');
             if (direction == 'left') {
                 if (this.active < 1) {
-                    this.slides[this.count - 1].classList.add('active-slide');
                     this.active = this.count - 1;
                 } else {
-                    this.slides[this.active - 1].classList.add('active-slide');
                     this.active -= 1;
                 }
             }
             if (direction == 'right') {
                 if (this.active == this.count - 1) {
-                    this.slides[this.count - this.count].classList.add('active-slide');
                     this.active = 0;
                 } else {
-                    this.slides[this.active + 1].classList.add('active-slide');
                     this.active += 1;
                 }
             }
+            this.gotoSlide(this.active);
         },
+        // Adds Class "active-slide" to the new active slide and removes the class from the previous active slide
+        // @param { Integer/String } [target] - id of the slide to make active
         gotoSlide(target){
-            console.log(target)
+            // set the target to integer as the template @click directive passes string
+            target = parseInt(target);
+            this.activeSlide.classList.remove('active-slide');
+            this.activeSlide = this.slides[target];
+            this.slides[target].classList.add('active-slide');
+            this.active = target;
         }
     }
 });
 
 function vueslider(selector, options) {
     let slideContainer = document.querySelector(selector),
-        arrVs = slideContainer.getElementsByTagName('vue-slider')[0].children,
-        slides = [];
-    for (let i = 0; i < arrVs.length; i++) {
-        slides[i] = arrVs[i];
-    }
-
+        vSlides= slideContainer.getElementsByTagName('vue-slider')[0].children;
     new Vue({
         el: selector,
         data: {
-            slides: slides,
+            slides: vSlides,
             options: options
         },
         components: {
             'vue-slider': vs
         }
+
     })
 }
 
