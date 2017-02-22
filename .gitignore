@@ -1,0 +1,14 @@
+/.idea
+images
+fonts
+index.html
+js
+css
+*.iml
+package.json
+.DS_Store
+**/node_modules
+npm-debug.log
+Thumbs.db
+
+webpack.config.js

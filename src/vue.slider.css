@@ -1,0 +1,46 @@
+.vue-slider-enabled,
+.vue-slider figure {
+    margin: 0;
+    padding: 0;
+}
+.vue-slider{
+    overflow:hidden;
+    height: 500px;
+    margin-bottom: 20px;
+}
+.vue-slider,
+.vs-container
+{
+    position: relative;
+}
+.vue-slider img {
+    vertical-align: middle;
+    max-width: 100%;
+}
+
+.vs-slide{
+    float:left;
+    width: 100%;
+}
+.vs-nav div{
+    position: absolute;
+    top:0;
+    width: 50px;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    height: 40px;
+    cursor: pointer;
+}
+.vs-prev{
+    left: 0;
+}
+.vs-next{
+    right: 0;
+}
+
+.dot{
+    height: 10px;
+    width: 10px;
+}
+
+
