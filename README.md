@@ -27,7 +27,9 @@ Put the script at the [bottom](https://developer.yahoo.com/performance/rules.htm
 
 ### Usage
 
-Wrap your slider items with the `<vue-slider></vue-slider>` component directive and wrap the component with a container element (div, ul etc.).
+Wrap your slider items with the `<vue-slider :vslides='slides' :voptions='options'></vue-slider>` component directive and wrap the component with a container element (div, ul etc.).
+
+**NOTE:** `:vslides='slides'` and `:voptions='options'` are mandatory.
 
 ```html
 <div class="slider">
