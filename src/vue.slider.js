@@ -29,14 +29,18 @@ let vs = Vue.extend({
                 transition: 'fade',
                 start: 1,
                 nav: true, // [ Boolean ] - Show Prev/Next Buttons
-                page: true // [ Boolean ] - Show Paginations
+                page: true, // [ Boolean ] - Show Paginations
+                autoplay: true, // [ Boolean ] - Enable Auto Play
+                delay: 5000,// [ Integer ] - Auto Play Speed (milliseconds)
+                transitionSpeed: 500, //[ Integer ] - Transition speed (milliseconds)
             }, // [ Object ] - User Options
             count: this.vslides.length, // [ Integer ] - No Of Items
             sliderWidth: 0, // [ Integer ] - Slider Width used if the transition option is 'slide'
             container: null, // [ HTMLDivElement ] - Main Outer Container
             slides: null, // [ NodeList ] - Array of all the slides
             active: 0, // [ Integer] - active slide index
-            activeSlide: null // [ HTMLDivElement ] - Active Slide Object
+            activeSlide: null, // [ HTMLDivElement ] - Active Slide Object
+            sliding: false // [ Boolean ] - Check if slide is in transition
         }
     },
     mounted: function () {
@@ -45,6 +49,7 @@ let vs = Vue.extend({
         document.body.className = "vue-slider-enabled";
         this.container = document.querySelector('.vs-container');
         this.slides = document.querySelectorAll('.vs-slide');
+        this.container.style.transition = this.settings.transitionSpeed + 'ms';
 
         /*********** SLIDER OPTIONS **********/
         // Check the type of each of the user options
@@ -84,21 +89,40 @@ let vs = Vue.extend({
                 callback.call(scope, i, array[i])
             }
         },
+        // Check for transitionend event
+        checkTransition(){
+            let core = this;
+            let transitions = {
+                'transition': 'transitionend',
+                'OTransition': 'oTransitionEnd',
+                'MozTransition': 'transitionend',
+                'WebkitTransition': 'webkitTransitionEnd'
+            };
+
+            for (let t in transitions) {
+                if (core.container.style[t] !== undefined) {
+                    console.log(transitions[t]);
+                    return transitions[t];
+                }
+            }
+        },
         // Sets active slide depending on direction.
         // @param { String } [ direction ]- The direction to move.
         navigation(direction){
-            if (direction == 'left') {
-                if (this.active < 1) {
-                    this.active = this.count - 1;
-                } else {
-                    this.active -= 1;
+            if (!this.sliding) {
+                if (direction == 'left') {
+                    if (this.active < 1) {
+                        this.active = this.count - 1;
+                    } else {
+                        this.active -= 1;
+                    }
                 }
-            }
-            if (direction == 'right') {
-                if (this.active == this.count - 1) {
-                    this.active = 0;
-                } else {
-                    this.active += 1;
+                if (direction == 'right') {
+                    if (this.active == this.count - 1) {
+                        this.active = 0;
+                    } else {
+                        this.active += 1;
+                    }
                 }
             }
             this.gotoSlide(this.active);
@@ -107,11 +131,30 @@ let vs = Vue.extend({
         // @param { Integer/String } [target] - id of the slide to make active
         gotoSlide(target){
             // set the target to integer as the template @click directive passes string
-            target = parseInt(target);
-            this.activeSlide.classList.remove('active-slide');
-            this.activeSlide = this.slides[target];
-            this.slides[target].classList.add('active-slide');
-            this.active = target;
+            if (!this.sliding) {
+                target = parseInt(target);
+                this.activeSlide.classList.remove('active-slide');
+                this.activeSlide = this.slides[target];
+                this.slides[target].classList.add('active-slide');
+                this.active = target;
+                console.log(this.activeSlide.offsetLeft);
+                if (this.settings.transition == 'slide') {
+                    this.animateSlide(this.container);
+                }
+            }
+        },
+        animateSlide(element){
+            if (!this.sliding) {
+                this.sliding = true;
+                element.style.transform = 'translate3D(' + (-this.activeSlide.offsetLeft) + 'px,0,0)'
+            }
+            let core = this,
+                transitionEvent = this.checkTransition();
+            // Wait for slide transition to end
+            element.addEventListener(transitionEvent, function () {
+                core.sliding = false;
+            });
+
         }
     }
 });
