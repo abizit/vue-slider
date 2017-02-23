@@ -1,10 +1,53 @@
-# Vue Slider
-A Simple Slider using VueJS
+## Vue Slider Beta
+A Simple Slider Component using VueJs.
+Please consider that the project is still in beta.
 
-### Prerequisities
+## Quick start
+
+### Install
+#### Prerequisities
 
 1. [Vue.js](https://vuejs.org/)
 
+#### HTML
+
+Put the required stylesheet at the [top](https://developer.yahoo.com/performance/rules.html#css_top) of your markup:
+
+```html
+<link rel="stylesheet" href="vue.slider.css" />
+```
+
+
+Put the script at the [bottom](https://developer.yahoo.com/performance/rules.html#js_bottom) of your markup right after Vuejs:
+
+```html
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="vue.slider.js"></script>
+```
+
+### Usage
+
+Wrap your items (`div`, `a`, `img`, `span`, `li` etc.) with a container element (`div`, `ul` etc.).
+
+```html
+<div class="slider">
+<vue-slider :vslides='slides' :voptions='options'>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  </vue-slider>
+</div>
+```
+
+Call the vue-sldier function.
+
+```javascript
+vueslider('.slider');
+```
 
 ## Contributing
 

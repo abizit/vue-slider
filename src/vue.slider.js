@@ -138,6 +138,7 @@ let vs = Vue.extend({
                 this.slides[target].classList.add('active-slide');
                 this.active = target;
                 console.log(this.activeSlide.offsetLeft);
+                // If transition is 'slide' enable Slide effect
                 if (this.settings.transition == 'slide') {
                     this.animateSlide(this.container);
                 }
