@@ -27,7 +27,7 @@ Put the script at the [bottom](https://developer.yahoo.com/performance/rules.htm
 
 ### Usage
 
-Wrap your items (`div`, `a`, `img`, `span`, `li` etc.) with a container element (`div`, `ul` etc.).
+Wrap your slider items with the `<vue-slider></vue-slider>` component directive and wrap the component with a container element (div, ul etc.).
 
 ```html
 <div class="slider">
