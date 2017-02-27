@@ -1,5 +1,6 @@
 ## Vue Slider Beta
 A Simple Slider Component using VueJs.
+
 Please consider that the project is still in beta.
 
 ## Quick start
@@ -27,7 +28,7 @@ Put the script at the [bottom](https://developer.yahoo.com/performance/rules.htm
 
 ### Usage
 
-Wrap your slider items with the `<vue-slider :vslides='slides' :voptions='options'></vue-slider>` component directive and wrap the component with a container element (div, ul etc.).
+Wrap your slider items with the `<vue-slider :vslides='slides' :voptions='options'></vue-slider>` component and wrap the component with a container element (div, ul etc.).
 
 **NOTE:** `:vslides='slides'` and `:voptions='options'` are mandatory.
 

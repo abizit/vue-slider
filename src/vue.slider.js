@@ -42,6 +42,7 @@ let vs = Vue.extend({
             activeSlide: null, // [ HTMLDivElement ] - Active Slide Object
             sliding: false // [ Boolean ] - Check if slide is in transition
         }
+
     },
     mounted: function () {
 
@@ -50,6 +51,7 @@ let vs = Vue.extend({
         this.container = document.querySelector('.vs-container');
         this.slides = document.querySelectorAll('.vs-slide');
         this.container.style.transition = this.settings.transitionSpeed + 'ms';
+
 
         /*********** SLIDER OPTIONS **********/
         // Check the type of each of the user options
@@ -72,12 +74,11 @@ let vs = Vue.extend({
         this.activeSlide.classList.add('active-slide');
 
         // Set Width to Slider Container if the transition options is 'slide'
-        this.each(this.slides, function (i, e) {
-            e.style.width = e.offsetWidth + 'px';
-            this.sliderWidth += e.offsetWidth;
-        }, this);
-        this.settings.transition == 'slide' ?
-            this.container.style.width = this.sliderWidth + 'px' : '';
+        this.setContainerWidth();
+
+    },
+    created: function () {
+        window.addEventListener('resize', this.resize)
     },
     methods: {
         // Loops through the given array and execute the callback
@@ -101,10 +102,21 @@ let vs = Vue.extend({
 
             for (let t in transitions) {
                 if (core.container.style[t] !== undefined) {
-                    console.log(transitions[t]);
                     return transitions[t];
                 }
             }
+        },
+        setContainerWidth(){
+            this.each(this.slides, function (i, e) {
+                e.style.width = window.innerWidth + 'px';
+                this.sliderWidth += e.offsetWidth;
+            }, this);
+            this.settings.transition == 'slide' ?
+                this.container.style.width = this.sliderWidth + 'px' : '';
+        },
+        resize(){
+            this.sliderWidth = 0;
+            this.setContainerWidth();
         },
         // Sets active slide depending on direction.
         // @param { String } [ direction ]- The direction to move.
@@ -137,7 +149,6 @@ let vs = Vue.extend({
                 this.activeSlide = this.slides[target];
                 this.slides[target].classList.add('active-slide');
                 this.active = target;
-                console.log(this.activeSlide.offsetLeft);
                 // If transition is 'slide' enable Slide effect
                 if (this.settings.transition == 'slide') {
                     this.animateSlide(this.container);
